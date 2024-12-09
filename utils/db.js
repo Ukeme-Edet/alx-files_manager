@@ -6,7 +6,8 @@ import { MongoClient } from 'mongodb';
 class DBClient {
   /**
      * Creates an instance of DBClient and connects to the MongoDB database.
-     */ constructor() {
+     */
+  constructor() {
     this.db = null;
     MongoClient.connect(
       `mongodb://${process.env.DB_HOST || 'localhost'}:${
