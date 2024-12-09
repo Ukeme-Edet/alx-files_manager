@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import dbClient from '../utils/db';
 
 /**
@@ -19,8 +20,16 @@ const postNew = async (req, res) => {
   if (!password) return res.status(400).send({ error: 'Missing password' });
   const user = await dbClient.db.collection('users').findOne({ email });
   if (user) return res.status(400).send({ error: 'Already exist' });
-  await dbClient.db.collection('users').insertOne({ email, password });
-  const userCreated = await dbClient.db.collection('users').findOne({ email });
+  const hashedPassword = crypto
+    .createHash('sha1')
+    .update(password)
+    .digest('hex');
+  await dbClient.db
+    .collection('users')
+    .insertOne({ email, password: hashedPassword });
+  const userCreated = await dbClient.db
+    .collection('users')
+    .findOne({ email });
   return res.status(201).send({ id: userCreated._id, email });
 };
 export default { postNew };
