@@ -20,11 +20,13 @@ const getConnect = async (req, res) => {
   if (!authHeader || !authHeader.startsWith('Basic ')) return res.status(401).json({ error: 'Unauthorized' });
 
   const base64Credentials = authHeader.split(' ')[1];
+  if (!base64Credentials) return res.status(401).json({ error: 'Unauthorized' });
   const credentials = Buffer.from(base64Credentials, 'base64').toString(
     'ascii',
   );
   const [email, password] = credentials.split(':');
 
+  if (!email || !password) return res.status(401).json({ error: 'Unauthorized' });
   const sha1Password = crypto
     .createHash('sha1')
     .update(password)
